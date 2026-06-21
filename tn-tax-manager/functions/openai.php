@@ -26,6 +26,7 @@ function tn801_ttm_get_ai_suggestions($post_id) {
 			'Do not invent new terms.',
 			'Do not suggest terms already assigned to this post in any taxonomy.',
 			'Prefer fewer strong suggestions.',
+			'If no unassigned terms are suitable, return {"suggestions":[]}.',
 			'Return JSON only: {"suggestions":["Term A","Term B"]}'
 		),
 		'assigned_terms' => array_values($current_names),
@@ -82,6 +83,12 @@ function tn801_ttm_call_openai_json($payload) {
 		->generate_text();
 
 	if (is_wp_error($text)) {
+		if (false !== stripos($text->get_error_message(), 'candidate')) {
+			return array(
+				'suggestions' => array(),
+			);
+		}
+
 		return new WP_Error(
 			'tn801_ttm_ai_client_error',
 			'OpenAI connector error: ' . $text->get_error_message(),

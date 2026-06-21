@@ -2,6 +2,11 @@
 
 All notable changes to TN Tax Manager are recorded here.
 
+## 1.0.27 - 2026-06-21
+
+- Treated native AI Client zero-candidate responses as no suggestions instead of surfacing an OpenAI connector error.
+- Clarified the AI prompt to return an empty suggestions array when no suitable unassigned category exists.
+
 ## 1.0.26 - 2026-06-21
 
 - Verified category assignment after adding a term before launching the new-term cleanup flow.
