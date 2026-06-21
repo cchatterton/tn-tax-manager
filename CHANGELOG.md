@@ -2,6 +2,11 @@
 
 All notable changes to TN Tax Manager are recorded here.
 
+## 1.0.32 - 2026-06-21
+
+- Added a refresh-page action in compact and floating modes after a category is added.
+- Kept the refresh action hidden until an add succeeds so normal page loads stay uncluttered.
+
 ## 1.0.31 - 2026-06-21
 
 - Forced the managed taxonomy to WordPress categories for the front-end widget.

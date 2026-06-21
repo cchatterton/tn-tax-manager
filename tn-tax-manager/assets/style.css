@@ -149,6 +149,23 @@
 	background: var(--tn801-ttm-blue-hover);
 }
 
+#wpadminbar .tn801-ttm-refresh-btn {
+	height: var(--tn801-ttm-pill-height);
+	padding: 0 var(--tn801-ttm-action-pad-x);
+	border: 1px solid rgba(255,255,255,0.22);
+	background: var(--tn801-ttm-blue);
+	color: #fff;
+	cursor: pointer;
+	line-height: var(--tn801-ttm-pill-line-height);
+	box-shadow: none;
+	text-shadow: none;
+	font: inherit;
+}
+
+#wpadminbar .tn801-ttm-refresh-btn:hover {
+	background: var(--tn801-ttm-blue-hover);
+}
+
 #wpadminbar #tn801-ttm-add-form {
 	display: inline-flex;
 	align-items: center;
@@ -237,6 +254,20 @@
 .tn801-ttm-detail-section {
     padding: 12px 0;
     border-bottom: 1px solid #eee;
+}
+
+.tn801-ttm-detail .tn801-ttm-refresh-btn {
+	float: right;
+	border: 0;
+	background: transparent;
+	color: var(--tn801-ttm-blue);
+	cursor: pointer;
+	padding: 0;
+	font: inherit;
+}
+
+.tn801-ttm-detail .tn801-ttm-refresh-btn:hover {
+	text-decoration: underline;
 }
 
 .tn801-ttm-detail-pills,

@@ -105,6 +105,8 @@ function tn801_ttm_add_admin_bar($wp_admin_bar) {
 			<?php endforeach; ?>
 		</div>
 
+		<button type="button" class="tn801-ttm-refresh-btn" hidden>Refresh</button>
+
 		<button type="button" id="tn801-ttm-toggle" class="tn801-ttm-toggle">+</button>
 
 		<form id="tn801-ttm-add-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="display:none;">
@@ -146,6 +148,7 @@ function tn801_ttm_render_detailed_widget() {
 		<div id="tn801-ttm-detail-panel" class="tn801-ttm-detail-panel">
 			<div class="tn801-ttm-detail-section">
 				<strong>Current Tags</strong>
+				<button type="button" class="tn801-ttm-refresh-btn" hidden>Refresh page</button>
 
 				<div class="tn801-ttm-detail-pills">
 					<?php foreach ($terms as $term) : ?>

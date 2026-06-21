@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	var fill = document.getElementById('tn801-ttm-fill');
 	var aiList = document.getElementById('tn801-ttm-ai-list');
 	var currentList = root.querySelector('.tn801-ttm-list') || root.querySelector('.tn801-ttm-detail-pills');
+	var refreshButton = root.querySelector('.tn801-ttm-refresh-btn');
 
 	var toggle = document.getElementById('tn801-ttm-toggle');
 	var detailToggle = document.getElementById('tn801-ttm-detail-toggle');
@@ -25,6 +26,12 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	if (!form || !input || !fill || !aiList) return;
+
+	if (refreshButton) {
+		refreshButton.addEventListener('click', function () {
+			window.location.reload();
+		});
+	}
 
 	if (toggle) {
 		toggle.addEventListener('click', function () {
@@ -155,6 +162,10 @@ document.addEventListener('DOMContentLoaded', function () {
 			fill.textContent = '';
 			currentMatch = '';
 			loadCurrentTerms();
+
+			if (refreshButton) {
+				refreshButton.hidden = false;
+			}
 		})
 		.catch(function () {
 			aiList.innerHTML = '<em>Could not add category.</em>';
