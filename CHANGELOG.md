@@ -2,6 +2,12 @@
 
 All notable changes to TN Tax Manager are recorded here.
 
+## 1.0.30 - 2026-06-21
+
+- Re-centered the front-end UI on the managed category taxonomy for current terms, removal, AI exclusion, and add actions.
+- Replaced AI Client structured JSON mode with plain text JSON output and local JSON extraction to avoid truncated structured responses.
+- Removed zero-candidate masking so connector failures surface as real errors instead of silent empty suggestions.
+
 ## 1.0.29 - 2026-06-21
 
 - Split add-category writes and taxonomy-manager launch into separate front-end actions.

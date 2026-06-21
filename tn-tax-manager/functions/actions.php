@@ -145,16 +145,12 @@ function tn801_ttm_remove() {
 
 	$post_id  = absint($_POST['post_id'] ?? 0);
 	$term_id  = absint($_POST['term_id'] ?? 0);
-	$taxonomy = sanitize_key($_POST['taxonomy'] ?? tn801_ttm_get_taxonomy());
+	$taxonomy = tn801_ttm_get_taxonomy();
 	$redirect = esc_url_raw($_POST['redirect_to'] ?? home_url());
 
 	if (!$post_id || !$term_id) {
 		wp_redirect($redirect);
 		exit;
-	}
-
-	if (!taxonomy_exists($taxonomy)) {
-		$taxonomy = tn801_ttm_get_taxonomy();
 	}
 
 	wp_remove_object_terms($post_id, $term_id, $taxonomy);

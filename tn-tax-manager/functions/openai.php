@@ -24,7 +24,7 @@ function tn801_ttm_get_ai_suggestions($post_id) {
 		'rules' => array(
 			'Only suggest terms from the taxonomy_tree.',
 			'Do not invent new terms.',
-			'Do not suggest terms already assigned to this post in any taxonomy.',
+			'Do not suggest terms already assigned to this post in the managed taxonomy.',
 			'Prefer fewer strong suggestions.',
 			'If no unassigned terms are suitable, return {"suggestions":[]}.',
 			'Return JSON only: {"suggestions":["Term A","Term B"]}'
@@ -73,22 +73,13 @@ function tn801_ttm_call_openai_json($payload) {
 		);
 	}
 
-	$schema = tn801_ttm_get_suggestion_json_schema();
-
 	$text = wp_ai_client_prompt(wp_json_encode($payload))
 		->using_provider('openai')
 		->using_system_instruction('Return valid JSON only. No commentary.')
-		->using_max_tokens(300)
-		->as_json_response($schema)
+		->using_max_tokens(1000)
 		->generate_text();
 
 	if (is_wp_error($text)) {
-		if (false !== stripos($text->get_error_message(), 'candidate')) {
-			return array(
-				'suggestions' => array(),
-			);
-		}
-
 		return new WP_Error(
 			'tn801_ttm_ai_client_error',
 			'OpenAI connector error: ' . $text->get_error_message(),
@@ -96,7 +87,7 @@ function tn801_ttm_call_openai_json($payload) {
 		);
 	}
 
-	$json = json_decode(trim((string) $text), true);
+	$json = tn801_ttm_decode_ai_json((string) $text);
 
 	if (!is_array($json)) {
 		return new WP_Error('tn801_ttm_bad_json', 'Bad AI response: ' . (string) $text);
@@ -105,20 +96,24 @@ function tn801_ttm_call_openai_json($payload) {
 	return $json;
 }
 
-function tn801_ttm_get_suggestion_json_schema() {
-	return array(
-		'type' => 'object',
-		'additionalProperties' => false,
-		'properties' => array(
-			'suggestions' => array(
-				'type' => 'array',
-				'items' => array(
-					'type' => 'string',
-				),
-			),
-		),
-		'required' => array('suggestions'),
-	);
+function tn801_ttm_decode_ai_json($text) {
+	$text = trim($text);
+	$json = json_decode($text, true);
+
+	if (is_array($json)) {
+		return $json;
+	}
+
+	$start = strpos($text, '{');
+	$end = strrpos($text, '}');
+
+	if ($start === false || $end === false || $end <= $start) {
+		return null;
+	}
+
+	$json = json_decode(substr($text, $start, $end - $start + 1), true);
+
+	return is_array($json) ? $json : null;
 }
 
 function tn801_ttm_get_taxonomy_tree_paths() {

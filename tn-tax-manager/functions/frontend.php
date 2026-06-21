@@ -64,8 +64,9 @@ function tn801_ttm_render_autocomplete_input() {
 }
 
 function tn801_ttm_render_current_term_pill($term, $post_id, $redirect, $remove_label) {
-	$taxonomy = $term->tn801_ttm_taxonomy ?? tn801_ttm_get_taxonomy();
-	$taxonomy_label = $term->tn801_ttm_taxonomy_label ?? $taxonomy;
+	$taxonomy = tn801_ttm_get_taxonomy();
+	$taxonomy_object = get_taxonomy($taxonomy);
+	$taxonomy_label = $taxonomy_object ? ($taxonomy_object->labels->singular_name ?? $taxonomy_object->label) : $taxonomy;
 	?>
 	<span class="tn801-ttm-pill" title="<?php echo esc_attr($taxonomy_label); ?>">
 		<span class="tn801-ttm-name"><?php echo esc_html($term->name); ?></span>
@@ -90,7 +91,7 @@ function tn801_ttm_add_admin_bar($wp_admin_bar) {
 	global $post;
 
 	$post_id  = $post->ID;
-	$terms    = tn801_ttm_get_assigned_terms($post_id);
+	$terms    = tn801_ttm_get_terms($post_id);
 	$redirect = get_permalink($post_id);
 
 	ob_start();
@@ -130,7 +131,7 @@ function tn801_ttm_render_detailed_widget() {
 	global $post;
 
 	$post_id  = $post->ID;
-	$terms    = tn801_ttm_get_assigned_terms($post_id);
+	$terms    = tn801_ttm_get_terms($post_id);
 	$redirect = get_permalink($post_id);
 
 	?>
