@@ -2,6 +2,11 @@
 
 All notable changes to TN Tax Manager are recorded here.
 
+## 1.0.28 - 2026-06-21
+
+- Restored the original add-term flow so existing or newly created category terms are assigned to the current post before redirect.
+- Used WordPress's native category assignment path when the managed taxonomy is `category`.
+
 ## 1.0.27 - 2026-06-21
 
 - Treated native AI Client zero-candidate responses as no suggestions instead of surfacing an OpenAI connector error.

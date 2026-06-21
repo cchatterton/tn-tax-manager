@@ -84,19 +84,18 @@ function tn801_ttm_add() {
 
 	if ($term && !is_wp_error($term)) {
 		$term_id = (int) $term->term_id;
-		$assigned = wp_set_object_terms($post_id, array($term_id), $taxonomy, true);
 
-		if (!is_wp_error($assigned)) {
-			clean_object_term_cache($post_id, get_post_type($post_id));
+		if ($taxonomy === 'category') {
+			$current_categories = wp_get_post_categories($post_id);
+			$current_categories[] = $term_id;
+			wp_set_post_categories($post_id, array_values(array_unique(array_map('intval', $current_categories))));
+		} else {
+			wp_set_post_terms($post_id, array($term_id), $taxonomy, true);
 		}
 
-		if (!is_wp_error($assigned) && has_term($term_id, $taxonomy, $post_id)) {
-			if ($created_new) {
-				update_term_meta($term_id, '_tn801_ttm_created_at', time());
-				$redirect = add_query_arg('tn801_ttm_new_term', $term_id, $redirect);
-			}
-		} else {
-			$redirect = add_query_arg('tn801_ttm_add_error', 'assign_failed', $redirect);
+		if ($created_new) {
+			update_term_meta($term_id, '_tn801_ttm_created_at', time());
+			$redirect = add_query_arg('tn801_ttm_new_term', $term_id, $redirect);
 		}
 	}
 
