@@ -20,12 +20,6 @@ function tn801_ttm_ai_suggest() {
 		wp_send_json_error('Missing post ID.');
 	}
 
-	$key = trim(get_option(TN801_TTM_OPENAI_KEY_OPTION, ''));
-
-	if ($key === '') {
-		wp_send_json_error('Missing OpenAI API key.');
-	}
-
 	$suggestions = tn801_ttm_get_ai_suggestions($post_id);
 
 	if (is_wp_error($suggestions)) {

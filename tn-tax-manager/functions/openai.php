@@ -7,8 +7,7 @@ if (!defined('ABSPATH')) exit;
 
 function tn801_ttm_get_ai_suggestions($post_id) {
 
-	$terms = tn801_ttm_get_terms($post_id);
-	$current_names = wp_list_pluck($terms, 'name');
+	$current_names = tn801_ttm_get_assigned_term_names($post_id);
 	$tree = tn801_ttm_get_taxonomy_tree_paths();
 	$post = get_post($post_id);
 
@@ -25,11 +24,11 @@ function tn801_ttm_get_ai_suggestions($post_id) {
 		'rules' => array(
 			'Only suggest terms from the taxonomy_tree.',
 			'Do not invent new terms.',
-			'Do not suggest terms already assigned.',
+			'Do not suggest terms already assigned to this post in any taxonomy.',
 			'Prefer fewer strong suggestions.',
 			'Return JSON only: {"suggestions":["Term A","Term B"]}'
 		),
-		'current_terms' => array_values($current_names),
+		'assigned_terms' => array_values($current_names),
 		'taxonomy_tree' => $tree,
 		'page' => $page_payload,
 	);
@@ -66,122 +65,54 @@ function tn801_ttm_get_ai_suggestions($post_id) {
 
 function tn801_ttm_call_openai_json($payload) {
 
-	$key = trim(get_option(TN801_TTM_OPENAI_KEY_OPTION, ''));
-	$model = apply_filters('tn801_ttm_openai_model', TN801_TTM_OPENAI_MODEL);
-
-	if ($key === '') {
-		return new WP_Error('tn801_ttm_missing_key', 'Missing OpenAI API key.');
+	if (!function_exists('wp_ai_client_prompt')) {
+		return new WP_Error(
+			'tn801_ttm_missing_ai_client',
+			'WordPress AI Client is unavailable. TN Tax Manager requires WordPress 7.0+ with the OpenAI provider configured.'
+		);
 	}
 
-	$response = wp_remote_post(
-		'https://api.openai.com/v1/responses',
-		array(
-			'timeout' => 30,
-			'headers' => array(
-				'Authorization' => 'Bearer ' . $key,
-				'Content-Type'  => 'application/json',
-			),
-			'body' => wp_json_encode(array(
-				'model' => $model,
-				'input' => array(
-					array(
-						'role' => 'developer',
-						'content' => array(
-							array(
-								'type' => 'input_text',
-								'text' => 'Return valid JSON only. No commentary.'
-							)
-						)
-					),
-					array(
-						'role' => 'user',
-						'content' => array(
-							array(
-								'type' => 'input_text',
-								'text' => wp_json_encode($payload)
-							)
-						)
-					)
-				),
-				'text' => array(
-					'format' => array(
-						'type' => 'json_schema',
-						'name' => 'tn801_taxonomy_suggestions',
-						'strict' => true,
-						'schema' => array(
-							'type' => 'object',
-							'additionalProperties' => false,
-							'properties' => array(
-								'suggestions' => array(
-									'type' => 'array',
-									'items' => array(
-										'type' => 'string',
-									),
-								),
-							),
-							'required' => array('suggestions'),
-						),
-					),
-				),
-				'max_output_tokens' => 300,
-			)),
-		)
-	);
+	$schema = tn801_ttm_get_suggestion_json_schema();
 
-	if (is_wp_error($response)) return $response;
+	$text = wp_ai_client_prompt(wp_json_encode($payload))
+		->using_provider('openai')
+		->using_system_instruction('Return valid JSON only. No commentary.')
+		->using_temperature(0.2)
+		->using_max_tokens(300)
+		->as_json_response($schema)
+		->generate_text();
 
-	$status = wp_remote_retrieve_response_code($response);
-	$body = wp_remote_retrieve_body($response);
-	$data = json_decode($body, true);
-
-	if ($status < 200 || $status >= 300) {
-		$message = '';
-
-		if (!empty($data['error']['message'])) {
-			$message = $data['error']['message'];
-		} elseif (!empty($body)) {
-			$message = wp_strip_all_tags($body);
-		}
-
-		if ($message === '') {
-			$message = 'OpenAI request failed with HTTP ' . intval($status) . '.';
-		}
-
-		return new WP_Error('tn801_ttm_openai_http', 'OpenAI error: ' . $message);
+	if (is_wp_error($text)) {
+		return new WP_Error(
+			'tn801_ttm_ai_client_error',
+			'OpenAI connector error: ' . $text->get_error_message(),
+			$text->get_error_data()
+		);
 	}
 
-	if (!is_array($data)) {
-		return new WP_Error('tn801_ttm_bad_response', 'OpenAI returned an unreadable response.');
-	}
-
-	if (!empty($data['error']['message'])) {
-		return new WP_Error('tn801_ttm_openai_error', 'OpenAI error: ' . $data['error']['message']);
-	}
-
-	$text = '';
-
-	if (!empty($data['output_text'])) {
-		$text = $data['output_text'];
-	} elseif (!empty($data['output']) && is_array($data['output'])) {
-		foreach ($data['output'] as $output) {
-			if (empty($output['content']) || !is_array($output['content'])) continue;
-
-			foreach ($output['content'] as $content) {
-				if (!empty($content['text'])) {
-					$text = $content['text'];
-					break 2;
-				}
-			}
-		}
-	}
-
-	$json = json_decode(trim($text), true);
+	$json = json_decode(trim((string) $text), true);
 
 	if (!is_array($json)) {
-		return new WP_Error('tn801_ttm_bad_json', 'Bad AI response: ' . $text);
+		return new WP_Error('tn801_ttm_bad_json', 'Bad AI response: ' . (string) $text);
 	}
 
 	return $json;
+}
+
+function tn801_ttm_get_suggestion_json_schema() {
+	return array(
+		'type' => 'object',
+		'additionalProperties' => false,
+		'properties' => array(
+			'suggestions' => array(
+				'type' => 'array',
+				'items' => array(
+					'type' => 'string',
+				),
+			),
+		),
+		'required' => array('suggestions'),
+	);
 }
 
 function tn801_ttm_get_taxonomy_tree_paths() {

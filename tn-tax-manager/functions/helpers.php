@@ -42,6 +42,34 @@ function tn801_ttm_get_terms($post_id) {
 }
 
 /**
+ * Get all assigned public taxonomy term names for exclusion checks.
+ */
+function tn801_ttm_get_assigned_term_names($post_id) {
+	$post = get_post($post_id);
+
+	if (!$post) {
+		return array();
+	}
+
+	$taxonomies = get_object_taxonomies($post->post_type, 'names');
+	$names = array();
+
+	foreach ($taxonomies as $taxonomy) {
+		$terms = get_the_terms($post_id, $taxonomy);
+
+		if (empty($terms) || is_wp_error($terms)) {
+			continue;
+		}
+
+		foreach ($terms as $term) {
+			$names[] = $term->name;
+		}
+	}
+
+	return array_values(array_unique(array_filter($names)));
+}
+
+/**
  * Get readable parent > child term path.
  */
 function tn801_ttm_get_term_path($term) {

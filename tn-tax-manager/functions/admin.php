@@ -38,7 +38,6 @@ add_action('admin_init', 'tn801_ttm_register_settings');
 function tn801_ttm_register_settings() {
 
 	register_setting('tn801_ttm_settings', TN801_TTM_MODE_OPTION);
-	register_setting('tn801_ttm_settings', TN801_TTM_OPENAI_KEY_OPTION);
 	register_setting('tn801_ttm_settings', TN801_TTM_TAXONOMY_OPTION);
 }
 
@@ -52,7 +51,6 @@ function tn801_ttm_register_settings() {
 function tn801_ttm_render_admin_page() {
 
 	$mode     = get_option(TN801_TTM_MODE_OPTION, TN801_TTM_DEFAULT_MODE);
-	$api_key  = get_option(TN801_TTM_OPENAI_KEY_OPTION, '');
 	$taxonomy = get_option(TN801_TTM_TAXONOMY_OPTION, TN801_TTM_DEFAULT_TAXONOMY);
 
 	$candidate = tn801_ttm_get_latest_unparented_term();
@@ -218,19 +216,6 @@ function tn801_ttm_render_admin_page() {
 									</option>
 								<?php endforeach; ?>
 							</select>
-						</td>
-					</tr>
-
-					<tr>
-						<th scope="row">OpenAI API Key</th>
-						<td>
-							<input
-								type="password"
-								class="regular-text"
-								name="<?php echo esc_attr(TN801_TTM_OPENAI_KEY_OPTION); ?>"
-								value="<?php echo esc_attr($api_key); ?>"
-								autocomplete="off"
-							>
 						</td>
 					</tr>
 				</table>

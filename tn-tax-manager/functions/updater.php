@@ -61,7 +61,7 @@ class TN801_TTM_GitHub_Updater {
 			'new_version'  => $version,
 			'url'          => $this->release_url($release),
 			'package'      => $package,
-			'requires'     => '6.0',
+			'requires'     => '7.0',
 			'requires_php' => '7.4',
 		);
 
@@ -94,7 +94,7 @@ class TN801_TTM_GitHub_Updater {
 			'author'        => 'Techn',
 			'homepage'      => $this->repo_url(),
 			'download_link' => $package,
-			'requires'      => '6.0',
+			'requires'      => '7.0',
 			'requires_php'  => '7.4',
 			'sections'      => array(
 				'description' => 'Lightweight front-end taxonomy management with AI suggestions and guided taxonomy cleanup.',

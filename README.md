@@ -2,6 +2,12 @@
 
 Lightweight front-end taxonomy management with AI suggestions and guided taxonomy cleanup.
 
+## Requirements
+
+- WordPress 7.0 or higher
+- PHP 7.4 or higher
+- Native WordPress AI Client with the OpenAI provider configured
+
 ## Release
 
 Build the installable WordPress plugin package with:
