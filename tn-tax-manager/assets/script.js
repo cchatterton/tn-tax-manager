@@ -49,6 +49,42 @@ document.addEventListener('DOMContentLoaded', function () {
 		currentMatch = '';
 	}
 
+	function submitAddForm() {
+		var q = input.value.trim();
+
+		if (!q.length || !window.tn801_ttm || !tn801_ttm.ajax_url) {
+			return false;
+		}
+
+		var data = new FormData(form);
+		data.set('action', 'tn801_ttm_add_async');
+		data.set('term_name', q);
+
+		fetch(tn801_ttm.ajax_url, {
+			method: 'POST',
+			credentials: 'same-origin',
+			body: data
+		})
+		.then(function (res) { return res.json(); })
+		.then(function (res) {
+			if (!res || !res.success) {
+				aiList.innerHTML = '<em>' + (res && res.data ? res.data : 'Could not add category.') + '</em>';
+				return;
+			}
+
+			if (res.data && res.data.created_new && tn801_ttm.tax_manager_url) {
+				window.open(tn801_ttm.tax_manager_url, '_blank');
+			}
+
+			window.location.reload();
+		})
+		.catch(function () {
+			aiList.innerHTML = '<em>Could not add category.</em>';
+		});
+
+		return true;
+	}
+
     function updateFill() {
     	var q = input.value.trim();
     
@@ -82,6 +118,11 @@ document.addEventListener('DOMContentLoaded', function () {
 	});
 
 	fill.addEventListener('click', acceptMatch);
+
+	form.addEventListener('submit', function (e) {
+		e.preventDefault();
+		submitAddForm();
+	});
 
 	aiList.innerHTML = '<em>Loading suggestions…</em>';
 
@@ -131,7 +172,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 			button.addEventListener('click', function () {
 				input.value = termName;
-				form.submit();
+				if (form.requestSubmit) {
+					form.requestSubmit();
+				} else {
+					submitAddForm();
+				}
 			});
 
 			aiList.appendChild(button);

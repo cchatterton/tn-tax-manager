@@ -2,6 +2,12 @@
 
 All notable changes to TN Tax Manager are recorded here.
 
+## 1.0.29 - 2026-06-21
+
+- Split add-category writes and taxonomy-manager launch into separate front-end actions.
+- Added an AJAX add endpoint that creates or finds the category, assigns it to the current post, then reports whether the term was newly created.
+- Updated manual and AI add buttons to use the same async add pathway.
+
 ## 1.0.28 - 2026-06-21
 
 - Restored the original add-term flow so existing or newly created category terms are assigned to the current post before redirect.
