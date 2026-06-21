@@ -77,7 +77,6 @@ function tn801_ttm_call_openai_json($payload) {
 	$text = wp_ai_client_prompt(wp_json_encode($payload))
 		->using_provider('openai')
 		->using_system_instruction('Return valid JSON only. No commentary.')
-		->using_temperature(0.2)
 		->using_max_tokens(300)
 		->as_json_response($schema)
 		->generate_text();

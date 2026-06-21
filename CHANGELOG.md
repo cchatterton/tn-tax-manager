@@ -2,6 +2,10 @@
 
 All notable changes to TN Tax Manager are recorded here.
 
+## 1.0.24 - 2026-06-21
+
+- Removed the AI Client temperature setting so the native OpenAI provider can use models that do not support `temperature`.
+
 ## 1.0.23 - 2026-06-21
 
 - Updated the minimum WordPress requirement to 7.0.
