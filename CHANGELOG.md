@@ -2,6 +2,11 @@
 
 All notable changes to TN Tax Manager are recorded here.
 
+## 1.0.26 - 2026-06-21
+
+- Verified category assignment after adding a term before launching the new-term cleanup flow.
+- Switched add actions to `wp_set_object_terms()` and refreshed post term cache after assignment.
+
 ## 1.0.25 - 2026-06-21
 
 - Displayed all current assigned public taxonomy terms in the front-end current tags UI.
