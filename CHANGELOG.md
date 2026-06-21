@@ -2,6 +2,11 @@
 
 All notable changes to TN Tax Manager are recorded here.
 
+## 1.0.25 - 2026-06-21
+
+- Displayed all current assigned public taxonomy terms in the front-end current tags UI.
+- Passed the term taxonomy through remove actions so current terms outside the managed taxonomy can be removed correctly.
+
 ## 1.0.24 - 2026-06-21
 
 - Removed the AI Client temperature setting so the native OpenAI provider can use models that do not support `temperature`.

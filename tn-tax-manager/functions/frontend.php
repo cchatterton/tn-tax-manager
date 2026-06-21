@@ -63,6 +63,26 @@ function tn801_ttm_render_autocomplete_input() {
 	<?php
 }
 
+function tn801_ttm_render_current_term_pill($term, $post_id, $redirect, $remove_label) {
+	$taxonomy = $term->tn801_ttm_taxonomy ?? tn801_ttm_get_taxonomy();
+	$taxonomy_label = $term->tn801_ttm_taxonomy_label ?? $taxonomy;
+	?>
+	<span class="tn801-ttm-pill" title="<?php echo esc_attr($taxonomy_label); ?>">
+		<span class="tn801-ttm-name"><?php echo esc_html($term->name); ?></span>
+
+		<form class="tn801-ttm-remove-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+			<input type="hidden" name="action" value="tn801_ttm_remove">
+			<input type="hidden" name="post_id" value="<?php echo esc_attr($post_id); ?>">
+			<input type="hidden" name="term_id" value="<?php echo esc_attr($term->term_id); ?>">
+			<input type="hidden" name="taxonomy" value="<?php echo esc_attr($taxonomy); ?>">
+			<input type="hidden" name="redirect_to" value="<?php echo esc_url($redirect); ?>">
+			<?php wp_nonce_field('tn801_ttm_remove', 'tn801_ttm_nonce'); ?>
+			<button type="submit" class="tn801-ttm-remove-btn"><?php echo esc_html($remove_label); ?></button>
+		</form>
+	</span>
+	<?php
+}
+
 function tn801_ttm_add_admin_bar($wp_admin_bar) {
 
 	if (!tn801_ttm_should_show()) return;
@@ -70,26 +90,15 @@ function tn801_ttm_add_admin_bar($wp_admin_bar) {
 	global $post;
 
 	$post_id  = $post->ID;
-	$terms    = tn801_ttm_get_terms($post_id);
+	$terms    = tn801_ttm_get_assigned_terms($post_id);
 	$redirect = get_permalink($post_id);
 
 	ob_start();
 	?>
-	<div id="tn801-ttm-wrap" class="tn801-ttm-wrap" data-post-id="<?php echo esc_attr($post_id); ?>">
-		<div class="tn801-ttm-list">
-			<?php foreach ($terms as $term) : ?>
-				<span class="tn801-ttm-pill">
-					<span class="tn801-ttm-name"><?php echo esc_html($term->name); ?></span>
-
-					<form class="tn801-ttm-remove-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-						<input type="hidden" name="action" value="tn801_ttm_remove">
-						<input type="hidden" name="post_id" value="<?php echo esc_attr($post_id); ?>">
-						<input type="hidden" name="term_id" value="<?php echo esc_attr($term->term_id); ?>">
-						<input type="hidden" name="redirect_to" value="<?php echo esc_url($redirect); ?>">
-						<?php wp_nonce_field('tn801_ttm_remove', 'tn801_ttm_nonce'); ?>
-						<button type="submit" class="tn801-ttm-remove-btn">×</button>
-					</form>
-				</span>
+		<div id="tn801-ttm-wrap" class="tn801-ttm-wrap" data-post-id="<?php echo esc_attr($post_id); ?>">
+			<div class="tn801-ttm-list">
+				<?php foreach ($terms as $term) : ?>
+					<?php tn801_ttm_render_current_term_pill($term, $post_id, $redirect, '×'); ?>
 			<?php endforeach; ?>
 		</div>
 
@@ -121,7 +130,7 @@ function tn801_ttm_render_detailed_widget() {
 	global $post;
 
 	$post_id  = $post->ID;
-	$terms    = tn801_ttm_get_terms($post_id);
+	$terms    = tn801_ttm_get_assigned_terms($post_id);
 	$redirect = get_permalink($post_id);
 
 	?>
@@ -137,18 +146,7 @@ function tn801_ttm_render_detailed_widget() {
 
 				<div class="tn801-ttm-detail-pills">
 					<?php foreach ($terms as $term) : ?>
-						<span class="tn801-ttm-pill">
-							<span class="tn801-ttm-name"><?php echo esc_html($term->name); ?></span>
-
-							<form class="tn801-ttm-remove-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-								<input type="hidden" name="action" value="tn801_ttm_remove">
-								<input type="hidden" name="post_id" value="<?php echo esc_attr($post_id); ?>">
-								<input type="hidden" name="term_id" value="<?php echo esc_attr($term->term_id); ?>">
-								<input type="hidden" name="redirect_to" value="<?php echo esc_url($redirect); ?>">
-								<?php wp_nonce_field('tn801_ttm_remove', 'tn801_ttm_nonce'); ?>
-								<button type="submit" class="tn801-ttm-remove-btn">Remove</button>
-							</form>
-						</span>
+						<?php tn801_ttm_render_current_term_pill($term, $post_id, $redirect, 'Remove'); ?>
 					<?php endforeach; ?>
 				</div>
 			</div>

@@ -42,6 +42,46 @@ function tn801_ttm_get_terms($post_id) {
 }
 
 /**
+ * Get sorted terms assigned to a post across all public taxonomies.
+ */
+function tn801_ttm_get_assigned_terms($post_id) {
+	$post = get_post($post_id);
+
+	if (!$post) {
+		return array();
+	}
+
+	$taxonomies = get_object_taxonomies($post->post_type, 'names');
+	$out = array();
+
+	foreach ($taxonomies as $taxonomy) {
+		$taxonomy_object = get_taxonomy($taxonomy);
+
+		if (!$taxonomy_object || empty($taxonomy_object->public)) {
+			continue;
+		}
+
+		$terms = get_the_terms($post_id, $taxonomy);
+
+		if (empty($terms) || is_wp_error($terms)) {
+			continue;
+		}
+
+		foreach ($terms as $term) {
+			$term->tn801_ttm_taxonomy = $taxonomy;
+			$term->tn801_ttm_taxonomy_label = $taxonomy_object->labels->singular_name ?? $taxonomy_object->label;
+			$out[$taxonomy . ':' . $term->term_id] = $term;
+		}
+	}
+
+	usort($out, function($a, $b) {
+		return strcasecmp($a->name, $b->name);
+	});
+
+	return $out;
+}
+
+/**
  * Get all assigned public taxonomy term names for exclusion checks.
  */
 function tn801_ttm_get_assigned_term_names($post_id) {
@@ -51,19 +91,11 @@ function tn801_ttm_get_assigned_term_names($post_id) {
 		return array();
 	}
 
-	$taxonomies = get_object_taxonomies($post->post_type, 'names');
+	$terms = tn801_ttm_get_assigned_terms($post_id);
 	$names = array();
 
-	foreach ($taxonomies as $taxonomy) {
-		$terms = get_the_terms($post_id, $taxonomy);
-
-		if (empty($terms) || is_wp_error($terms)) {
-			continue;
-		}
-
-		foreach ($terms as $term) {
-			$names[] = $term->name;
-		}
+	foreach ($terms as $term) {
+		$names[] = $term->name;
 	}
 
 	return array_values(array_unique(array_filter($names)));

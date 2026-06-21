@@ -3,7 +3,7 @@
  * Plugin Name: TN Tax Manager
  * Plugin URI: https://github.com/cchatterton/tn-tax-manager/releases/latest
  * Description: Lightweight front-end taxonomy management with AI suggestions and guided taxonomy cleanup.
- * Version: 1.0.24
+ * Version: 1.0.25
  * Requires at least: 7.0
  * Requires PHP: 7.4
  * Update URI: https://github.com/cchatterton/tn-tax-manager
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) exit;
 
 define('TN801_TTM_PLUGIN_FILE', __FILE__);
 define('TN801_TTM_PLUGIN_BASENAME', plugin_basename(__FILE__));
-define('TN801_TTM_VERSION', '1.0.24');
+define('TN801_TTM_VERSION', '1.0.25');
 
 define('TN801_TTM_MODE_OPTION', 'tn801_ttm_display_mode');
 define('TN801_TTM_TAXONOMY_OPTION', 'tn801_ttm_taxonomy');
