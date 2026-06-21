@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	var input = document.getElementById('tn801-ttm-input');
 	var fill = document.getElementById('tn801-ttm-fill');
 	var aiList = document.getElementById('tn801-ttm-ai-list');
+	var currentList = root.querySelector('.tn801-ttm-list') || root.querySelector('.tn801-ttm-detail-pills');
 
 	var toggle = document.getElementById('tn801-ttm-toggle');
 	var detailToggle = document.getElementById('tn801-ttm-detail-toggle');
@@ -49,6 +50,80 @@ document.addEventListener('DOMContentLoaded', function () {
 		currentMatch = '';
 	}
 
+	function renderCurrentTerms(terms) {
+		if (!currentList || !Array.isArray(terms)) return;
+
+		currentList.innerHTML = '';
+
+		terms.forEach(function (term) {
+			var pill = document.createElement('span');
+			var name = document.createElement('span');
+			var removeForm = document.createElement('form');
+			var action = document.createElement('input');
+			var post = document.createElement('input');
+			var termId = document.createElement('input');
+			var nonce = document.createElement('input');
+			var button = document.createElement('button');
+
+			pill.className = 'tn801-ttm-pill';
+			name.className = 'tn801-ttm-name';
+			name.textContent = term.name;
+
+			removeForm.className = 'tn801-ttm-remove-form';
+			removeForm.method = 'post';
+
+			action.type = 'hidden';
+			action.name = 'action';
+			action.value = 'tn801_ttm_remove_async';
+
+			post.type = 'hidden';
+			post.name = 'post_id';
+			post.value = postId;
+
+			termId.type = 'hidden';
+			termId.name = 'term_id';
+			termId.value = term.id;
+
+			nonce.type = 'hidden';
+			nonce.name = 'tn801_ttm_nonce';
+			nonce.value = tn801_ttm.remove_nonce;
+
+			button.type = 'submit';
+			button.className = 'tn801-ttm-remove-btn';
+			button.textContent = root.id === 'tn801-ttm-wrap' ? '×' : 'Remove';
+
+			removeForm.appendChild(action);
+			removeForm.appendChild(post);
+			removeForm.appendChild(termId);
+			removeForm.appendChild(nonce);
+			removeForm.appendChild(button);
+
+			pill.appendChild(name);
+			pill.appendChild(removeForm);
+			currentList.appendChild(pill);
+		});
+	}
+
+	function loadCurrentTerms() {
+		if (!currentList || !tn801_ttm.current_nonce) return;
+
+		var url = new URL(tn801_ttm.ajax_url);
+		url.searchParams.set('action', 'tn801_ttm_current_terms');
+		url.searchParams.set('post_id', postId);
+		url.searchParams.set('nonce', tn801_ttm.current_nonce);
+
+		fetch(url.toString(), {
+			method: 'GET',
+			credentials: 'same-origin'
+		})
+		.then(function (res) { return res.json(); })
+		.then(function (res) {
+			if (res && res.success) {
+				renderCurrentTerms(res.data);
+			}
+		});
+	}
+
 	function submitAddForm() {
 		var q = input.value.trim();
 
@@ -76,7 +151,10 @@ document.addEventListener('DOMContentLoaded', function () {
 				window.open(tn801_ttm.tax_manager_url, '_blank');
 			}
 
-			window.location.reload();
+			input.value = '';
+			fill.textContent = '';
+			currentMatch = '';
+			loadCurrentTerms();
 		})
 		.catch(function () {
 			aiList.innerHTML = '<em>Could not add category.</em>';
@@ -119,10 +197,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	fill.addEventListener('click', acceptMatch);
 
+	if (currentList) {
+		currentList.addEventListener('submit', function (e) {
+			var removeForm = e.target.closest('.tn801-ttm-remove-form');
+			if (!removeForm) return;
+
+			e.preventDefault();
+
+			var data = new FormData(removeForm);
+
+			fetch(tn801_ttm.ajax_url, {
+				method: 'POST',
+				credentials: 'same-origin',
+				body: data
+			})
+			.then(function (res) { return res.json(); })
+			.then(function (res) {
+				if (res && res.success) {
+					renderCurrentTerms(res.data);
+				}
+			});
+		});
+	}
+
 	form.addEventListener('submit', function (e) {
 		e.preventDefault();
 		submitAddForm();
 	});
+
+	loadCurrentTerms();
 
 	aiList.innerHTML = '<em>Loading suggestions…</em>';
 

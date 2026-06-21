@@ -48,6 +48,8 @@ function tn801_ttm_enqueue_assets() {
     	array(
     		'ajax_url'        => admin_url('admin-ajax.php'),
     		'ai_nonce'        => wp_create_nonce('tn801_ttm_ai_suggest'),
+    		'current_nonce'   => wp_create_nonce('tn801_ttm_current_terms'),
+    		'remove_nonce'    => wp_create_nonce('tn801_ttm_remove'),
     		'tax_manager_url' => admin_url('admin.php?page=tn801-ttm-tax-manager'),
     		'terms'           => tn801_ttm_get_all_term_names(),
     	)

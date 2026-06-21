@@ -2,6 +2,12 @@
 
 All notable changes to TN Tax Manager are recorded here.
 
+## 1.0.31 - 2026-06-21
+
+- Forced the managed taxonomy to WordPress categories for the front-end widget.
+- Added live AJAX loading for current category terms so the widget refreshes from WordPress instead of relying on stale page-rendered markup.
+- Added async category removal and refresh to keep compact and floating modes in sync after changes.
+
 ## 1.0.30 - 2026-06-21
 
 - Re-centered the front-end UI on the managed category taxonomy for current terms, removal, AI exclusion, and add actions.

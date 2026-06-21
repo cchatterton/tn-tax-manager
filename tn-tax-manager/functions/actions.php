@@ -7,7 +7,9 @@ if (!defined('ABSPATH')) exit;
 
 add_action('wp_ajax_tn801_ttm_ai_suggest', 'tn801_ttm_ai_suggest');
 add_action('wp_ajax_tn801_ttm_lookup', 'tn801_ttm_lookup');
+add_action('wp_ajax_tn801_ttm_current_terms', 'tn801_ttm_current_terms');
 add_action('wp_ajax_tn801_ttm_add_async', 'tn801_ttm_add_async');
+add_action('wp_ajax_tn801_ttm_remove_async', 'tn801_ttm_remove_async');
 add_action('admin_post_tn801_ttm_add', 'tn801_ttm_add');
 add_action('admin_post_tn801_ttm_remove', 'tn801_ttm_remove');
 
@@ -55,6 +57,33 @@ function tn801_ttm_lookup() {
 	}
 
 	wp_send_json($out);
+}
+
+function tn801_ttm_current_terms() {
+
+	check_ajax_referer('tn801_ttm_current_terms', 'nonce');
+
+	$post_id = absint($_GET['post_id'] ?? 0);
+
+	if (!$post_id) {
+		wp_send_json_error('Missing post ID.');
+	}
+
+	wp_send_json_success(tn801_ttm_get_current_term_payload($post_id));
+}
+
+function tn801_ttm_get_current_term_payload($post_id) {
+	$out = array();
+
+	foreach (tn801_ttm_get_terms($post_id) as $term) {
+		$out[] = array(
+			'id'       => (int) $term->term_id,
+			'name'     => $term->name,
+			'taxonomy' => tn801_ttm_get_taxonomy(),
+		);
+	}
+
+	return $out;
 }
 
 function tn801_ttm_add() {
@@ -157,4 +186,26 @@ function tn801_ttm_remove() {
 
 	wp_redirect($redirect);
 	exit;
+}
+
+function tn801_ttm_remove_async() {
+
+	check_ajax_referer('tn801_ttm_remove', 'tn801_ttm_nonce');
+
+	$post_id = absint($_POST['post_id'] ?? 0);
+	$term_id = absint($_POST['term_id'] ?? 0);
+
+	if (!$post_id || !$term_id) {
+		wp_send_json_error('Missing post ID or category ID.');
+	}
+
+	$removed = wp_remove_object_terms($post_id, $term_id, tn801_ttm_get_taxonomy());
+
+	if (is_wp_error($removed)) {
+		wp_send_json_error($removed->get_error_message());
+	}
+
+	clean_object_term_cache($post_id, get_post_type($post_id));
+
+	wp_send_json_success(tn801_ttm_get_current_term_payload($post_id));
 }

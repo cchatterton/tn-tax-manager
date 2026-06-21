@@ -20,7 +20,7 @@ function tn801_ttm_should_show() {
  * Get the taxonomy this plugin manages.
  */
 function tn801_ttm_get_taxonomy() {
-	return get_option(TN801_TTM_TAXONOMY_OPTION, TN801_TTM_DEFAULT_TAXONOMY);
+	return 'category';
 }
 
 /**
