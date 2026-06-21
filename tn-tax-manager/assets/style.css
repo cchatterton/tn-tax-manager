@@ -1,0 +1,358 @@
+/* ==========================================================================
+   TN Tax Manager - Frontend Styles
+   ========================================================================== */
+
+:root {
+	--tn801-ttm-font-size: 12px;
+	--tn801-ttm-gap: 6px;
+	--tn801-ttm-pill-height: 24px;
+	--tn801-ttm-pill-line-height: 22px;
+	--tn801-ttm-pill-pad-x: 0.6rem;
+	--tn801-ttm-action-pad-x: 7px;
+	--tn801-ttm-blue: #2271b1;
+	--tn801-ttm-blue-hover: #135e96;
+	--tn801-ttm-dark: #2c3338;
+	--tn801-ttm-dark-hover: #3a4349;
+	--tn801-ttm-remove: #ffb3b3;
+	--tn801-ttm-add: #5fff7a;
+	--tn801-ttm-border-light: #dcdcde;
+	--tn801-ttm-panel-text: #1d2327;
+}
+
+/* --------------------------------------------------------------------------
+   Compact admin bar mode
+   -------------------------------------------------------------------------- */
+
+#wpadminbar #wp-admin-bar-tn801-ttm-node > .ab-item {
+	padding: 0 !important;
+	height: auto !important;
+}
+
+#wpadminbar #tn801-ttm-wrap {
+	display: flex;
+	align-items: center;
+	gap: var(--tn801-ttm-gap);
+	height: 32px;
+	white-space: nowrap;
+}
+
+#wpadminbar #tn801-ttm-wrap * {
+	box-sizing: border-box;
+	font-size: var(--tn801-ttm-font-size);
+}
+
+#wpadminbar .tn801-ttm-list,
+#wpadminbar .tn801-ttm-ai-list {
+	display: flex;
+	align-items: center;
+	gap: var(--tn801-ttm-gap);
+	flex-wrap: nowrap;
+	white-space: nowrap;
+}
+
+#wpadminbar > * {
+	overflow: scroll;
+}
+
+#wpadminbar > *::-webkit-scrollbar {
+	display: none;
+}
+
+/* Shared compact pill layout */
+#wpadminbar .tn801-ttm-pill,
+#wpadminbar .tn801-ttm-pill-ai {
+	display: inline-flex;
+	align-items: center;
+	height: var(--tn801-ttm-pill-height);
+	overflow: hidden;
+	background: var(--tn801-ttm-dark);
+	border: 1px solid rgba(255,255,255,0.18);
+	padding: 0 0 0 var(--tn801-ttm-pill-pad-x);
+	color: #fff;
+	line-height: 1;
+	flex: 0 0 auto;
+	box-shadow: none;
+	text-shadow: none;
+	font: inherit;
+	appearance: none;
+	-webkit-appearance: none;
+}
+
+#wpadminbar .tn801-ttm-pill-ai {
+	cursor: pointer;
+}
+
+#wpadminbar .tn801-ttm-pill-ai:hover {
+	background: var(--tn801-ttm-dark-hover);
+}
+
+#wpadminbar .tn801-ttm-name {
+	display: inline-block;
+	color: #fff;
+	line-height: var(--tn801-ttm-pill-line-height);
+	padding: 0 8px 0 0;
+}
+
+#wpadminbar .tn801-ttm-remove-form {
+	display: inline-flex;
+	margin: 0;
+	padding: 0;
+}
+
+/* Shared compact action buttons */
+#wpadminbar .tn801-ttm-remove-btn,
+#wpadminbar .tn801-ttm-add-btn {
+	height: calc(var(--tn801-ttm-pill-height) - 2px);
+	min-width: 22px;
+	padding: 0 var(--tn801-ttm-action-pad-x);
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+	line-height: 20px !important;
+	box-shadow: none;
+	text-shadow: none;
+	font: inherit;
+}
+
+#wpadminbar .tn801-ttm-remove-btn {
+	color: var(--tn801-ttm-remove);
+}
+
+#wpadminbar .tn801-ttm-add-btn {
+	color: var(--tn801-ttm-add);
+}
+
+#wpadminbar .tn801-ttm-remove-btn:hover,
+#wpadminbar .tn801-ttm-add-btn:hover {
+	background: rgba(255,255,255,0.08);
+	color: #fff;
+}
+
+#wpadminbar .tn801-ttm-toggle {
+	height: 1.5rem;
+	line-height: 1rem;
+	width: 1.5rem;
+	text-align: center;
+	padding: 0 0.025rem 0.15rem 0;
+	border: 0;
+	border-radius: 0;
+	background: var(--tn801-ttm-blue);
+	color: #fff;
+	cursor: pointer;
+	box-shadow: none;
+	text-shadow: none;
+	font-size: 16px;
+	flex: 0 0 auto;
+}
+
+#wpadminbar .tn801-ttm-toggle:hover {
+	background: var(--tn801-ttm-blue-hover);
+}
+
+#wpadminbar #tn801-ttm-add-form {
+	display: inline-flex;
+	align-items: center;
+	margin: 0;
+	padding: 0;
+	flex: 0 0 auto;
+}
+
+#wpadminbar #tn801-ttm-input,
+#wpadminbar #tn801-ttm-input:focus,
+#wpadminbar #tn801-ttm-input:focus-visible {
+	height: var(--tn801-ttm-pill-height);
+	min-width: 150px;
+	padding: 0 12px;
+	border: 1px solid rgba(255,255,255,0.25);
+	border-radius: 3px !important;
+	line-height: var(--tn801-ttm-pill-line-height);
+	outline: none;
+	box-shadow: none;
+	flex: 0 0 auto;
+	background: #fff;
+	color: #1d2327;
+}
+
+#wpadminbar .tn801-ttm-ai-list:empty {
+	display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Detailed floating widget mode
+   -------------------------------------------------------------------------- */
+
+.tn801-ttm-detail {
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	z-index: 99999;
+	font-family: inherit;
+}
+
+.tn801-ttm-detail * {
+	box-sizing: border-box;
+    font-size: var(--tn801-ttm-font-size) !important;
+    line-height: 1rem !important;
+}
+
+.tn801-ttm-detail-toggle {
+	background: var(--tn801-ttm-blue);
+	color: #fff;
+	border: 0;
+	padding: 0.8rem;
+	cursor: pointer;
+	font-weight: 600;
+	box-shadow: 0 4px 14px rgba(0,0,0,.18);
+	width: 100%;
+	min-width: 280px;
+    text-align: left;
+}
+
+.tn801-ttm-detail-toggle:hover {
+	background: var(--tn801-ttm-blue-hover);
+}
+
+.tn801-ttm-detail-panel {
+	display: none;
+	width: 280px;
+	max-height: 70vh;
+	overflow: auto;
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	box-shadow: 0 8px 24px rgba(0,0,0,.18);
+	padding: 16px;
+	color: var(--tn801-ttm-panel-text);
+}
+
+.tn801-ttm-detail.is-open .tn801-ttm-detail-panel {
+	display: block;
+	min-height: 90vh;
+}
+
+.tn801-ttm-detail-panel h3 {
+	margin-top: 0;
+	font-size: 16px;
+}
+
+.tn801-ttm-detail-section {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.tn801-ttm-detail-pills,
+.tn801-ttm-detail .tn801-ttm-ai-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--tn801-ttm-gap);
+	margin-top: 8px;
+}
+
+/* Shared detailed pill layout */
+.tn801-ttm-detail .tn801-ttm-pill,
+.tn801-ttm-detail .tn801-ttm-pill-ai {
+	display: inline-flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	min-height: var(--tn801-ttm-pill-height);
+	gap: var(--tn801-ttm-gap);
+	background: #f0f0f1;
+	border: 1px solid var(--tn801-ttm-border-light);
+	padding: 6px 8px;
+	color: var(--tn801-ttm-panel-text);
+}
+
+.tn801-ttm-detail .tn801-ttm-name {
+	color: var(--tn801-ttm-panel-text);
+	line-height: 1.3;
+	padding: 0;
+	text-align: left;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.tn801-ttm-detail .tn801-ttm-remove-form {
+	display: inline-flex;
+	margin: 0;
+	padding: 0;
+}
+
+.tn801-ttm-detail .tn801-ttm-remove-btn,
+.tn801-ttm-detail .tn801-ttm-add-btn {
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+	padding: 0 4px;
+	font: inherit;
+}
+
+.tn801-ttm-detail .tn801-ttm-remove-btn {
+	color: #b32d2e;
+}
+
+.tn801-ttm-detail .tn801-ttm-add-btn {
+	color: green;
+}
+
+.tn801-ttm-detail .tn801-ttm-remove-btn:hover,
+.tn801-ttm-detail .tn801-ttm-add-btn:hover {
+	text-decoration: underline;
+}
+
+.tn801-ttm-detail form {
+	margin: 0;
+}
+
+.tn801-ttm-detail input[type="text"],
+.tn801-ttm-detail input[type="text"]:focus,
+.tn801-ttm-detail input[type="text"]:focus-visible {
+	width: 100%;
+	margin: 8px 0;
+	padding: 8px 10px;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	background: #fff;
+	color: var(--tn801-ttm-panel-text);
+	outline: none;
+	box-shadow: none;
+	line-height: 1.4;
+}
+
+.tn801-ttm-detail input[type="text"]:focus {
+	border-color: var(--tn801-ttm-blue);
+	box-shadow: 0 0 0 1px var(--tn801-ttm-blue);
+}
+
+.tn801-ttm-autocomplete {
+	position: relative;
+	width: 100%;
+}
+
+.tn801-ttm-fill {
+	position: absolute;
+	left: 10px;
+	top: 49%;
+	transform: translateY(-50%);
+	color: #aaa;
+	pointer-events: auto;
+	white-space: nowrap;
+	z-index: 1;
+}
+
+#tn801-ttm-input {
+	position: relative;
+	z-index: 2;
+	background: transparent;
+}
+
+.tn801-ttm-detail-toggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.tn801-ttm-detail.is-open .tn801-ttm-toggle-icon {
+	transform: rotate(45deg);
+}
