@@ -2,6 +2,11 @@
 
 All notable changes to TN Tax Manager are recorded here.
 
+## 1.0.33 - 2026-06-22
+
+- Decoded HTML entities in category names before showing current terms, autocomplete options, AI suggestions, and taxonomy wizard labels.
+- Matched add requests against decoded and stored category names so terms such as `Gear & Set ups` do not create duplicates when WordPress stores an encoded label.
+
 ## 1.0.32 - 2026-06-21
 
 - Added a refresh-page action in compact and floating modes after a category is added.

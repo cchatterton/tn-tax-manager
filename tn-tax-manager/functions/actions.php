@@ -50,7 +50,7 @@ function tn801_ttm_lookup() {
 		foreach ($terms as $term) {
 			$out[] = array(
 				'id'   => $term->term_id,
-				'name' => $term->name,
+				'name' => tn801_ttm_get_term_name($term),
 				'path' => tn801_ttm_get_term_path($term),
 			);
 		}
@@ -78,7 +78,7 @@ function tn801_ttm_get_current_term_payload($post_id) {
 	foreach (tn801_ttm_get_terms($post_id) as $term) {
 		$out[] = array(
 			'id'       => (int) $term->term_id,
-			'name'     => $term->name,
+			'name'     => tn801_ttm_get_term_name($term),
 			'taxonomy' => tn801_ttm_get_taxonomy(),
 		);
 	}
@@ -127,7 +127,8 @@ function tn801_ttm_create_and_assign_term($post_id, $term_name) {
 	}
 
 	$taxonomy = tn801_ttm_get_taxonomy();
-	$term = get_term_by('name', $term_name, $taxonomy);
+	$term_name = tn801_ttm_decode_term_name($term_name);
+	$term = tn801_ttm_find_term_by_name($term_name, $taxonomy);
 	$created_new = false;
 
 	if (!$term) {
@@ -162,7 +163,7 @@ function tn801_ttm_create_and_assign_term($post_id, $term_name) {
 
 	return array(
 		'term_id'     => $term_id,
-		'name'        => $term->name,
+		'name'        => tn801_ttm_get_term_name($term),
 		'taxonomy'    => $taxonomy,
 		'created_new' => $created_new,
 	);

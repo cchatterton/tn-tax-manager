@@ -46,12 +46,12 @@ function tn801_ttm_get_ai_suggestions($post_id) {
 		$current = array();
 
 		foreach ($current_names as $name) {
-			$current[strtolower($name)] = true;
+			$current[tn801_ttm_get_term_name_key($name)] = true;
 		}
 
 		foreach ($response['suggestions'] as $name) {
-			$name = sanitize_text_field($name);
-			$key = strtolower($name);
+			$name = tn801_ttm_decode_term_name(sanitize_text_field($name));
+			$key = tn801_ttm_get_term_name_key($name);
 
 			if (!$name) continue;
 			if (isset($current[$key])) continue;
@@ -131,7 +131,7 @@ function tn801_ttm_get_taxonomy_tree_paths() {
 
 	foreach ($terms as $term) {
 		$out[] = array(
-			'name' => $term->name,
+			'name' => tn801_ttm_get_term_name($term),
 			'path' => tn801_ttm_get_term_path($term),
 		);
 	}
@@ -153,7 +153,8 @@ function tn801_ttm_get_term_name_lookup() {
 	if (is_wp_error($terms) || empty($terms)) return $out;
 
 	foreach ($terms as $term) {
-		$out[strtolower($term->name)] = $term->name;
+		$name = tn801_ttm_get_term_name($term);
+		$out[tn801_ttm_get_term_name_key($name)] = $name;
 	}
 
 	return $out;

@@ -242,7 +242,7 @@ function tn801_ttm_render_admin_page() {
 					<div class="tn801-ttm-card tn801-ttm-candidate">
 						<div>
 							<div class="tn801-ttm-label">New top-level term</div>
-							<div class="tn801-ttm-name"><?php echo esc_html($candidate->name); ?></div>
+							<div class="tn801-ttm-name"><?php echo esc_html(tn801_ttm_get_term_name($candidate)); ?></div>
 							<div class="tn801-ttm-meta">
 								<?php echo intval($candidate->count); ?> posts
 								<?php
@@ -409,7 +409,7 @@ function tn801_ttm_render_term_tree($terms, $parent = 0, $exclude_term_id = 0) {
 
 		echo '<div class="tn801-ttm-node-wrap">';
 
-		echo '<div class="tn801-ttm-node" data-term-id="' . esc_attr($term->term_id) . '" data-term-name="' . esc_attr($term->name) . '">';
+		echo '<div class="tn801-ttm-node" data-term-id="' . esc_attr($term->term_id) . '" data-term-name="' . esc_attr(tn801_ttm_get_term_name($term)) . '">';
 
 		if ($has_children) {
 			echo '<span class="tn801-ttm-toggle">+</span>';
@@ -417,7 +417,7 @@ function tn801_ttm_render_term_tree($terms, $parent = 0, $exclude_term_id = 0) {
 			echo '<span class="tn801-ttm-toggle is-empty">·</span>';
 		}
 
-		echo '<span>' . esc_html($term->name) . '</span>';
+		echo '<span>' . esc_html(tn801_ttm_get_term_name($term)) . '</span>';
 		echo '<small>(' . intval($term->count) . ')</small>';
 
 		echo '</div>';

@@ -71,7 +71,7 @@ function tn801_ttm_render_current_term_pill($term, $post_id, $redirect, $remove_
 	$taxonomy_label = $taxonomy_object ? ($taxonomy_object->labels->singular_name ?? $taxonomy_object->label) : $taxonomy;
 	?>
 	<span class="tn801-ttm-pill" title="<?php echo esc_attr($taxonomy_label); ?>">
-		<span class="tn801-ttm-name"><?php echo esc_html($term->name); ?></span>
+		<span class="tn801-ttm-name"><?php echo esc_html(tn801_ttm_get_term_name($term)); ?></span>
 
 		<form class="tn801-ttm-remove-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
 			<input type="hidden" name="action" value="tn801_ttm_remove">

@@ -24,6 +24,54 @@ function tn801_ttm_get_taxonomy() {
 }
 
 /**
+ * Decode stored term labels for UI, AI prompts, and matching.
+ */
+function tn801_ttm_decode_term_name($name) {
+	return wp_specialchars_decode((string) $name, ENT_QUOTES);
+}
+
+function tn801_ttm_get_term_name($term) {
+	return tn801_ttm_decode_term_name($term->name ?? '');
+}
+
+function tn801_ttm_get_term_name_key($name) {
+	return strtolower(tn801_ttm_decode_term_name($name));
+}
+
+function tn801_ttm_find_term_by_name($term_name, $taxonomy) {
+	$candidates = array_unique(array(
+		$term_name,
+		tn801_ttm_decode_term_name($term_name),
+	));
+
+	foreach ($candidates as $candidate) {
+		$term = get_term_by('name', $candidate, $taxonomy);
+
+		if ($term && !is_wp_error($term)) {
+			return $term;
+		}
+	}
+
+	$needle = tn801_ttm_get_term_name_key($term_name);
+	$terms = get_terms(array(
+		'taxonomy'   => $taxonomy,
+		'hide_empty' => false,
+	));
+
+	if (is_wp_error($terms) || empty($terms)) {
+		return false;
+	}
+
+	foreach ($terms as $term) {
+		if (tn801_ttm_get_term_name_key($term->name) === $needle) {
+			return $term;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Get sorted terms for a post.
  */
 function tn801_ttm_get_terms($post_id) {
@@ -35,7 +83,7 @@ function tn801_ttm_get_terms($post_id) {
 	}
 
 	usort($terms, function($a, $b) {
-		return strcasecmp($a->name, $b->name);
+		return strcasecmp(tn801_ttm_get_term_name($a), tn801_ttm_get_term_name($b));
 	});
 
 	return $terms;
@@ -45,7 +93,7 @@ function tn801_ttm_get_terms($post_id) {
  * Get assigned managed taxonomy term names for exclusion checks.
  */
 function tn801_ttm_get_assigned_term_names($post_id) {
-	return wp_list_pluck(tn801_ttm_get_terms($post_id), 'name');
+	return array_map('tn801_ttm_get_term_name', tn801_ttm_get_terms($post_id));
 }
 
 /**
@@ -54,7 +102,7 @@ function tn801_ttm_get_assigned_term_names($post_id) {
 function tn801_ttm_get_term_path($term) {
 	$taxonomy = tn801_ttm_get_taxonomy();
 
-	$names  = array($term->name);
+	$names  = array(tn801_ttm_get_term_name($term));
 	$parent = (int) $term->parent;
 
 	while ($parent) {
@@ -64,7 +112,7 @@ function tn801_ttm_get_term_path($term) {
 			break;
 		}
 
-		array_unshift($names, $parent_term->name);
+		array_unshift($names, tn801_ttm_get_term_name($parent_term));
 		$parent = (int) $parent_term->parent;
 	}
 
@@ -100,5 +148,5 @@ function tn801_ttm_get_all_term_names() {
 		return array();
 	}
 
-	return wp_list_pluck($terms, 'name');
+	return array_map('tn801_ttm_get_term_name', $terms);
 }
